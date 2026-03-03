@@ -1,0 +1,233 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    background: #000;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #fff;
+}
+
+#game-canvas {
+    display: block;
+    width: 100vw;
+    height: 100vh;
+}
+
+/* HUD */
+#hud {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: none;
+}
+
+#hud-time {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+#hud-speed {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+#hud-speed .unit {
+    font-size: 20px;
+    font-weight: normal;
+    opacity: 0.7;
+}
+
+#hud-split {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 22px;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+#hud-split.visible {
+    opacity: 1;
+}
+
+#hud-split.ahead {
+    color: #4cff4c;
+}
+
+#hud-split.behind {
+    color: #ff4c4c;
+}
+
+#hud-progress-bar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
+}
+
+#hud-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #fff;
+    border-radius: 2px;
+    transition: width 0.1s linear;
+}
+
+/* Menu Screen */
+#menu-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 10;
+}
+
+#menu-screen h1 {
+    font-size: 80px;
+    font-weight: 900;
+    letter-spacing: 12px;
+    margin-bottom: 8px;
+    text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+#menu-screen .subtitle {
+    font-size: 18px;
+    opacity: 0.7;
+    margin-bottom: 40px;
+}
+
+#menu-screen .prompt {
+    font-size: 20px;
+    animation: pulse 1.5s ease-in-out infinite;
+    margin-bottom: 30px;
+}
+
+#menu-screen .controls-info {
+    font-size: 14px;
+    opacity: 0.6;
+    text-align: center;
+    line-height: 1.8;
+}
+
+#best-time {
+    margin-top: 20px;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Countdown */
+#countdown-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15;
+    pointer-events: none;
+}
+
+#countdown-text {
+    font-size: 120px;
+    font-weight: 900;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    animation: countdownPop 0.8s ease-out;
+}
+
+/* Results Screen */
+#results-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10;
+}
+
+#results-screen h2 {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: 8px;
+    margin-bottom: 20px;
+}
+
+#results-time {
+    font-size: 64px;
+    font-weight: bold;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 20px;
+}
+
+#results-splits {
+    font-size: 16px;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+#results-record {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 20px;
+}
+
+#results-screen .prompt {
+    font-size: 18px;
+    animation: pulse 1.5s ease-in-out infinite;
+    opacity: 0.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+@keyframes countdownPop {
+    0% { transform: scale(2); opacity: 0; }
+    30% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}

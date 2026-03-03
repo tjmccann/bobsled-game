@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bobsled",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["server.py"],
+      "port": 8080
+    },
+    {
+      "name": "fairy-game",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8091", "--directory", "/Users/tmccann/Desktop/code/fairy-princess-game"],
+      "port": 8091
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bobsled</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+    }
+    </script>
+</head>
+<body>
+    <canvas id="game-canvas"></canvas>
+
+    <div id="hud">
+        <div id="hud-time">0:00.000</div>
+        <div id="hud-speed">0 <span class="unit">km/h</span></div>
+        <div id="hud-split"></div>
+        <div id="hud-progress-bar">
+            <div id="hud-progress-fill"></div>
+        </div>
+    </div>
+
+    <div id="menu-screen">
+        <h1>BOBSLED</h1>
+        <p class="subtitle">2-Man Bobsled Time Trial</p>
+        <p class="prompt">Press ENTER to start</p>
+        <div class="controls-info">
+            <p><strong>Controls:</strong></p>
+            <p>SPACEBAR — Push start (mash for speed)</p>
+            <p>LEFT / RIGHT or A / D — Steer</p>
+            <p>M — Toggle sound</p>
+        </div>
+        <div id="best-time"></div>
+    </div>
+
+    <div id="countdown-overlay" class="hidden">
+        <div id="countdown-text"></div>
+    </div>
+
+    <div id="results-screen" class="hidden">
+        <h2>FINISH</h2>
+        <div id="results-time"></div>
+        <div id="results-splits"></div>
+        <div id="results-record"></div>
+        <p class="prompt">Press ENTER to restart</p>
+    </div>
+
+    <script type="module">
+        // Cache-bust: dynamic import ensures fresh modules on every load
+        await import('./src/main.js?v=' + Date.now());
+    </script>
+</body>
+</html>
