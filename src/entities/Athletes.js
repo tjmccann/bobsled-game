@@ -22,6 +22,10 @@ export class Athletes {
         this.jumpTimer = 0;
         this.jumpDuration = 0.6; // seconds
 
+        // Shared materials for team uniform (allows recoloring via applyColors)
+        this.suitMaterial = new THREE.MeshStandardMaterial({ color: 0x1155aa, roughness: 0.6 });
+        this.helmetMaterial = new THREE.MeshStandardMaterial({ color: 0xcc2222, metalness: 0.3, roughness: 0.4 });
+
         // Create two athletes (left and right of sled)
         this.athleteLeft = this._buildAthlete();
         this.athleteRight = this._buildAthlete();
@@ -48,18 +52,11 @@ export class Athletes {
     _buildAthlete() {
         const figure = new THREE.Group();
 
-        // Colors — team uniform
-        const suitColor = 0x1155aa;
-        const helmetColor = 0xcc2222;
-        const skinColor = 0xe8b88a;
-        const gloveColor = 0x222222;
-        const bootColor = 0x333333;
-
-        const suitMat = new THREE.MeshStandardMaterial({ color: suitColor, roughness: 0.6 });
-        const helmetMat = new THREE.MeshStandardMaterial({ color: helmetColor, metalness: 0.3, roughness: 0.4 });
-        const skinMat = new THREE.MeshStandardMaterial({ color: skinColor, roughness: 0.8 });
-        const gloveMat = new THREE.MeshStandardMaterial({ color: gloveColor, roughness: 0.7 });
-        const bootMat = new THREE.MeshStandardMaterial({ color: bootColor, roughness: 0.8 });
+        // Use shared materials for suit and helmet (recolorable via applyColors)
+        const suitMat = this.suitMaterial;
+        const helmetMat = this.helmetMaterial;
+        const gloveMat = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.7 });
+        const bootMat = new THREE.MeshStandardMaterial({ color: 0x333333, roughness: 0.8 });
 
         // --- Torso (leans forward when running) ---
         const torso = new THREE.Group();
@@ -157,6 +154,17 @@ export class Athletes {
         figure.add(rightLeg);
 
         return figure;
+    }
+
+    /**
+     * Apply country-specific colors to athlete uniforms.
+     * Both athletes share the same material instances, so changing
+     * the color on the shared material updates both figures.
+     * @param {{ suit: number, helmet: number }} colors
+     */
+    applyColors(colors) {
+        this.suitMaterial.color.setHex(colors.suit);
+        this.helmetMaterial.color.setHex(colors.helmet);
     }
 
     /**

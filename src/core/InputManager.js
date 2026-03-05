@@ -43,6 +43,18 @@ export class InputManager {
     }
 
     /**
+     * Was a specific key just pressed? (check and clear — single-consume)
+     * Use for UI navigation where we want one action per press, not repeats.
+     */
+    isKeyConsumed(key) {
+        if (this.keysDown.has(key)) {
+            this.keysDown.delete(key);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Get the mash rate (presses per second) over the last 1 second.
      * Also prunes old timestamps.
      */

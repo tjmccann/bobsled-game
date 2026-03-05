@@ -11,12 +11,14 @@ import {
     TRACK_WIDTH
 } from '../constants.js';
 import { clamp, lerp } from '../utils/math.js';
+import { COUNTRIES } from '../data/CountryConfig.js';
 
 /**
  * Game states: MENU, COUNTDOWN, PUSH_START, RACING, FINISH, RESULTS
  */
 export const GameState = {
     MENU: 'MENU',
+    COUNTRY_SELECT: 'COUNTRY_SELECT',
     COUNTDOWN: 'COUNTDOWN',
     PUSH_START: 'PUSH_START',
     RACING: 'RACING',
@@ -49,12 +51,17 @@ export class GameStateManager {
         this.bestTime = this._loadBestTime();
         this.bestSplits = this._loadBestSplits();
 
+        // Country selection
+        this.selectedCountryIndex = 0;
+        this.selectedCountry = COUNTRIES[0];
+
         // DOM references
         this.menuScreen = document.getElementById('menu-screen');
         this.resultsScreen = document.getElementById('results-screen');
         this.countdownOverlay = document.getElementById('countdown-overlay');
         this.countdownText = document.getElementById('countdown-text');
         this.hudEl = document.getElementById('hud');
+        this.countrySelectScreen = document.getElementById('country-select-screen');
 
         this._showMenu();
     }
@@ -70,6 +77,8 @@ export class GameStateManager {
         switch (this.state) {
             case GameState.MENU:
                 return this._updateMenu(dt);
+            case GameState.COUNTRY_SELECT:
+                return this._updateCountrySelect(dt);
             case GameState.COUNTDOWN:
                 return this._updateCountdown(dt);
             case GameState.PUSH_START:
@@ -95,6 +104,7 @@ export class GameStateManager {
         this.menuScreen.classList.remove('hidden');
         this.resultsScreen.classList.add('hidden');
         this.countdownOverlay.classList.add('hidden');
+        this.countrySelectScreen.classList.add('hidden');
         this.hudEl.style.display = 'none';
 
         // Show best time
@@ -115,6 +125,73 @@ export class GameStateManager {
             }
 
             this.menuScreen.classList.add('hidden');
+            this._showCountrySelect();
+            this._transitionTo(GameState.COUNTRY_SELECT);
+        }
+        return dt;
+    }
+
+    // === COUNTRY SELECT ===
+
+    _showCountrySelect() {
+        this.countrySelectScreen.classList.remove('hidden');
+
+        // Populate grid dynamically from COUNTRIES data
+        const grid = document.getElementById('country-grid');
+        grid.innerHTML = COUNTRIES.map((country, i) => {
+            const p = country.sled.primary.toString(16).padStart(6, '0');
+            const s = country.sled.secondary.toString(16).padStart(6, '0');
+            const a = country.sled.accent.toString(16).padStart(6, '0');
+            return `
+                <div class="country-item ${i === this.selectedCountryIndex ? 'selected' : ''}" data-index="${i}">
+                    <span class="country-flag">${country.flag}</span>
+                    <span class="country-name">${country.name}</span>
+                    <div class="color-preview">
+                        <span class="swatch" style="background:#${p}"></span>
+                        <span class="swatch" style="background:#${s}"></span>
+                        <span class="swatch" style="background:#${a}"></span>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    _renderCountryGrid() {
+        const items = document.querySelectorAll('#country-grid .country-item');
+        items.forEach((item, i) => {
+            item.classList.toggle('selected', i === this.selectedCountryIndex);
+        });
+    }
+
+    _updateCountrySelect(dt) {
+        // Arrow key navigation (4x2 grid)
+        if (this.input.isKeyConsumed('ArrowLeft')) {
+            this.selectedCountryIndex = (this.selectedCountryIndex - 1 + COUNTRIES.length) % COUNTRIES.length;
+            this._renderCountryGrid();
+        }
+        if (this.input.isKeyConsumed('ArrowRight')) {
+            this.selectedCountryIndex = (this.selectedCountryIndex + 1) % COUNTRIES.length;
+            this._renderCountryGrid();
+        }
+        if (this.input.isKeyConsumed('ArrowUp')) {
+            this.selectedCountryIndex = (this.selectedCountryIndex - 4 + COUNTRIES.length) % COUNTRIES.length;
+            this._renderCountryGrid();
+        }
+        if (this.input.isKeyConsumed('ArrowDown')) {
+            this.selectedCountryIndex = (this.selectedCountryIndex + 4) % COUNTRIES.length;
+            this._renderCountryGrid();
+        }
+
+        // Confirm selection
+        if (this.input.isEnterPressed()) {
+            this.selectedCountry = COUNTRIES[this.selectedCountryIndex];
+
+            // Apply colors to sled and athletes
+            this.sled.applyColors(this.selectedCountry.sled);
+            if (this.athletes) this.athletes.applyColors(this.selectedCountry.athlete);
+
+            // Hide country select, show countdown
+            this.countrySelectScreen.classList.add('hidden');
             this.countdownOverlay.classList.remove('hidden');
             this.countdownNumber = COUNTDOWN_DURATION;
             this.countdownText.textContent = this.countdownNumber;
@@ -135,6 +212,14 @@ export class GameStateManager {
 
             this._transitionTo(GameState.COUNTDOWN);
         }
+
+        // ESC to go back to menu
+        if (this.input.isKeyConsumed('Escape')) {
+            this.countrySelectScreen.classList.add('hidden');
+            this._showMenu();
+            this._transitionTo(GameState.MENU);
+        }
+
         return dt;
     }
 

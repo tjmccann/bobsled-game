@@ -50,6 +50,8 @@ export class Sled {
         body.castShadow = true;
         this.group.add(body);
         this.originalColors.set(body, bodyColor);
+        this.bodyMaterial = bodyMat;
+        this.bodyMesh = body;
 
         // --- Cowling / nose fairing (at +Z = front) ---
         const cowlGeo = new THREE.SphereGeometry(0.28, 12, 8, 0, Math.PI * 2, 0, Math.PI / 2);
@@ -65,6 +67,8 @@ export class Sled {
         cowl.castShadow = true;
         this.group.add(cowl);
         this.originalColors.set(cowl, bodyColor);
+        this.cowlMaterial = cowlMat;
+        this.cowlMesh = cowl;
 
         // --- Windshield ---
         const shieldGeo = new THREE.PlaneGeometry(0.55, 0.25);
@@ -79,6 +83,7 @@ export class Sled {
         shield.position.set(0, 0.48, 0.9);
         shield.rotation.x = -0.4;
         this.group.add(shield);
+        this.shieldMaterial = shieldMat;
 
         // --- Cockpit (recessed area) ---
         const cockpitGeo = new THREE.BoxGeometry(0.52, 0.08, 1.2);
@@ -89,6 +94,7 @@ export class Sled {
         const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
         cockpit.position.set(0, 0.38, -0.1);
         this.group.add(cockpit);
+        this.cockpitMaterial = cockpitMat;
 
         // --- Runners (2 steel strips underneath) ---
         const runnerGeo = new THREE.BoxGeometry(0.04, 0.04, 2.8);
@@ -182,6 +188,26 @@ export class Sled {
 
         this.sparks = new THREE.Points(geo, mat);
         this.sparkActive = false;
+    }
+
+    /**
+     * Apply country-specific colors to the sled.
+     * @param {{ primary: number, secondary: number, accent: number }} colors
+     */
+    applyColors(colors) {
+        // Body + cowl use primary color
+        this.bodyMaterial.color.setHex(colors.primary);
+        this.cowlMaterial.color.setHex(colors.primary);
+
+        // Cockpit uses secondary color
+        this.cockpitMaterial.color.setHex(colors.secondary);
+
+        // Windshield tinted with accent color
+        this.shieldMaterial.color.setHex(colors.accent);
+
+        // Update the originalColors map so wall-hit flash recovery uses new colors
+        this.originalColors.set(this.bodyMesh, colors.primary);
+        this.originalColors.set(this.cowlMesh, colors.primary);
     }
 
     /**

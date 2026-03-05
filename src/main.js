@@ -160,7 +160,7 @@ function animate() {
     sled.update(effectiveDt);
 
     // Update chase camera (only during active gameplay)
-    if (gameState.state !== GameState.MENU && gameState.state !== GameState.RESULTS) {
+    if (gameState.state !== GameState.MENU && gameState.state !== GameState.COUNTRY_SELECT && gameState.state !== GameState.RESULTS) {
         chaseCamera.update(effectiveDt, trackSpline, sledPhysics.t, sledPhysics.speed, sled.group);
         updateShadowCamera();
     }
